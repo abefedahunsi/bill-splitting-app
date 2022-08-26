@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,6 +23,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
   _btnCreateGroupTap() {
     final userInfo = ref.read(userProvider);
+
+    log("${userInfo.name} ${userInfo.phoneNumber} ${userInfo.upiId} ");
 
     if (userInfo.name != "" &&
         userInfo.phoneNumber != "" &&

@@ -10,7 +10,10 @@ import 'package:splitty/config/images.dart';
 import 'package:splitty/providers/user_provider.dart';
 
 class ProfileSetupScreen extends ConsumerStatefulWidget {
-  const ProfileSetupScreen({Key? key}) : super(key: key);
+  final bool isFirstTimeSetup;
+
+  const ProfileSetupScreen({Key? key, this.isFirstTimeSetup = false})
+      : super(key: key);
 
   @override
   ConsumerState<ProfileSetupScreen> createState() => _ProfileSetupScreenState();
@@ -101,6 +104,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       String upiId = upiIdController.text;
 
       if (name.isNotEmpty) {
+        NavigatorState navigatorState = Navigator.of(context);
         await addUserInfo(name: name, profileImage: image, upiId: upiId);
 
         ref.read(userProvider.state).update(
@@ -112,11 +116,15 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
               ),
             );
 
-        showAlertDialog(
-          context: context,
-          title: "Done ✅",
-          description: "Your details are saved.",
-        );
+        if (widget.isFirstTimeSetup) {
+          navigatorState.pushNamedAndRemoveUntil("/main", (route) => false);
+        } else {
+          showAlertDialog(
+            context: context,
+            title: "Done ✅",
+            description: "Your details are saved.",
+          );
+        }
       } else {
         showAlertDialog(
             context: context,
@@ -236,30 +244,32 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 child: const Text("save"),
               ),
             ),
-            const SizedBox(height: 80),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              margin: const EdgeInsets.symmetric(horizontal: 30),
-              child: TextButton(
-                onPressed: () {
-                  _btnLogoutTap();
-                },
-                style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all(Colors.red),
-                  padding: MaterialStateProperty.all(
-                    const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 20,
+            if (widget.isFirstTimeSetup) ...[
+              const SizedBox(height: 80),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.symmetric(horizontal: 30),
+                child: TextButton(
+                  onPressed: () {
+                    _btnLogoutTap();
+                  },
+                  style: ButtonStyle(
+                    foregroundColor: MaterialStateProperty.all(Colors.red),
+                    padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 20,
+                      ),
                     ),
+                    overlayColor:
+                        MaterialStateProperty.all(Colors.red.withOpacity(.4)),
+                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12))),
                   ),
-                  overlayColor:
-                      MaterialStateProperty.all(Colors.red.withOpacity(.4)),
-                  shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12))),
+                  child: const Text("Logout"),
                 ),
-                child: const Text("Logout"),
               ),
-            ),
+            ],
             const SizedBox(height: 40),
           ],
         ),

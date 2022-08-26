@@ -152,7 +152,8 @@ class _OtpSendAndVerifyScreenState
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-              builder: (context) => const ProfileSetupScreen(),
+              builder: (context) =>
+                  const ProfileSetupScreen(isFirstTimeSetup: true),
             ),
             (route) => false,
           );
@@ -164,7 +165,8 @@ class _OtpSendAndVerifyScreenState
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-            builder: (context) => const ProfileSetupScreen(),
+            builder: (context) =>
+                const ProfileSetupScreen(isFirstTimeSetup: true),
           ),
           (route) => false,
         );

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:splitty/app/login/login_screen.dart';
+import 'package:splitty/app/main_screen/main_screen.dart';
 import 'package:splitty/config/config.dart';
 import 'package:splitty/config/theme.dart';
 
@@ -30,6 +31,10 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: theme,
         home: const LoginScreen(),
+        routes: {
+          "/login": (context) => const LoginScreen(),
+          "/main": (context) => const MainScreen(),
+        },
       ),
     );
   }
