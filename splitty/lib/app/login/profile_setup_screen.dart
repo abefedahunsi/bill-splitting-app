@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:splitty/app/login/controller/auth_controller.dart';
+import 'package:splitty/app/login/login_screen.dart';
 import 'package:splitty/common/alert_dialog.dart';
 import 'package:splitty/config/images.dart';
 import 'package:splitty/providers/user_provider.dart';
@@ -132,6 +133,24 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     });
   }
 
+  _btnLogoutTap() async {
+    try {
+      NavigatorState navigatorState = Navigator.of(context);
+      await logOut();
+
+      navigatorState.pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        (route) => false,
+      );
+    } catch (e) {
+      log("$e");
+      showAlertDialog(
+          context: context,
+          title: "oops!",
+          description: "something went wrong.");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -215,6 +234,30 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
               child: ElevatedButton(
                 onPressed: _btnSaveTapped ? null : _saveUserInfo,
                 child: const Text("save"),
+              ),
+            ),
+            const SizedBox(height: 80),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              margin: const EdgeInsets.symmetric(horizontal: 30),
+              child: TextButton(
+                onPressed: () {
+                  _btnLogoutTap();
+                },
+                style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.all(Colors.red),
+                  padding: MaterialStateProperty.all(
+                    const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 20,
+                    ),
+                  ),
+                  overlayColor:
+                      MaterialStateProperty.all(Colors.red.withOpacity(.4)),
+                  shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12))),
+                ),
+                child: const Text("Logout"),
               ),
             ),
             const SizedBox(height: 40),

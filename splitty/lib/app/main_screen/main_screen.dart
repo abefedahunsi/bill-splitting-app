@@ -15,6 +15,50 @@ class MainScreen extends ConsumerStatefulWidget {
 
 class _MainScreenState extends ConsumerState<MainScreen> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  _btnCreateGroupTap() {
+    final userInfo = ref.read(userProvider);
+
+    if (userInfo.name != "" &&
+        userInfo.phoneNumber != "" &&
+        userInfo.profileImage != "") {
+      //
+    } else {
+      _showProfileIncompleteSnackBar();
+    }
+  }
+
+  _showProfileIncompleteSnackBar() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        backgroundColor: const Color(0xFFe5e5e5),
+        content: const Text(
+          "Please Complete your Profile information",
+          style: TextStyle(color: Colors.black, fontFamily: "Outfit"),
+        ),
+        action: SnackBarAction(
+            label: "Update",
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ProfileSetupScreen(),
+                ),
+              );
+            }),
+        duration: const Duration(seconds: 12),
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -53,7 +97,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    _btnCreateGroupTap();
+                  },
                   child: Container(
                     width: 48,
                     height: 48,
