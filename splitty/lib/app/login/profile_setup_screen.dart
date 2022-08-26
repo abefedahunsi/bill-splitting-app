@@ -58,7 +58,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             return Padding(
               padding: const EdgeInsets.only(top: 20, left: 30, right: 30),
               child: GridView.count(
-                crossAxisCount: 4,
+                crossAxisCount: 3,
                 controller: scrollController,
                 crossAxisSpacing: 20,
                 mainAxisSpacing: 20,
