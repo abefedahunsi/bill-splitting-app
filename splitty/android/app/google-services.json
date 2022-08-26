@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1017582610100",
+    "project_id": "splittybill",
+    "storage_bucket": "splittybill.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1017582610100:android:add22085276fe9365f99e1",
+        "android_client_info": {
+          "package_name": "app.splitty.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1017582610100-u4v7a8jg711vckimn36ldiee4irqjc0f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJyKcOTu1L4NcFj7sPvSjQd6t171oB5gU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1017582610100-u4v7a8jg711vckimn36ldiee4irqjc0f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
