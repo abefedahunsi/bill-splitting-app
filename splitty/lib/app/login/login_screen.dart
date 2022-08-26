@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:splitty/app/main_screen/main_screen.dart';
+import 'package:splitty/common/alert_dialog.dart';
 import 'package:splitty/config/colors.dart';
 
 import 'otp_send_and_verify_screen.dart';
@@ -150,6 +151,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 builder: (context) => OtpSendAndVerifyScreen(
                                     phoneNumber: _phoneNumber),
                               ),
+                            );
+                          } else {
+                            showAlertDialog(
+                              context: context,
+                              title: "oops",
+                              description: "Please provide phone number",
                             );
                           }
                         },

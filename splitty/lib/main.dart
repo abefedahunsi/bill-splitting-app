@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:splitty/app/login/login_screen.dart';
 import 'package:splitty/config/config.dart';
 import 'package:splitty/config/theme.dart';
@@ -23,11 +24,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: appName,
-      debugShowCheckedModeBanner: false,
-      theme: theme,
-      home: const LoginScreen(),
+    return ProviderScope(
+      child: MaterialApp(
+        title: appName,
+        debugShowCheckedModeBanner: false,
+        theme: theme,
+        home: const LoginScreen(),
+      ),
     );
   }
 }

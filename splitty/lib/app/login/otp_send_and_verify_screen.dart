@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pinput/pinput.dart';
 import 'package:splitty/common/alert_dialog.dart';
+import 'package:splitty/config/colors.dart';
 
 class OtpSendAndVerifyScreen extends ConsumerStatefulWidget {
   final String phoneNumber;
@@ -87,34 +88,36 @@ class _OtpSendAndVerifyScreenState
   }
 
   void verifyOTP(String otp) async {
-    setState(() {
-      _isVerifyingOTP = true;
-    });
-    try {
-      PhoneAuthCredential credential = PhoneAuthProvider.credential(
-          verificationId: _verificationId, smsCode: otp);
-      // _signInWithPhoneOTP(credential); //TODO:
-    } on FirebaseAuthException catch (e) {
-      setState(() {
-        _isVerifyingOTP = false;
-      });
+// TODO:
 
-      debugPrint(e.toString());
-      debugPrint(e.code);
-      if (e.code == "invalid-verification-code") {
-        showAlertDialog(
-          context: context,
-          title: "oops!",
-          description: "OTP verification failed, provide correct OTP.",
-        );
-      } else {
-        showAlertDialog(
-          context: context,
-          title: "oops!",
-          description: "Something went wrong, try again later.",
-        );
-      }
-    }
+    // setState(() {
+    //   _isVerifyingOTP = true;
+    // });
+    // try {
+    //   PhoneAuthCredential credential = PhoneAuthProvider.credential(
+    //       verificationId: _verificationId, smsCode: otp);
+    //   // _signInWithPhoneOTP(credential); //TODO:
+    // } on FirebaseAuthException catch (e) {
+    //   setState(() {
+    //     _isVerifyingOTP = false;
+    //   });
+
+    //   debugPrint(e.toString());
+    //   debugPrint(e.code);
+    //   if (e.code == "invalid-verification-code") {
+    //     showAlertDialog(
+    //       context: context,
+    //       title: "oops!",
+    //       description: "OTP verification failed, provide correct OTP.",
+    //     );
+    //   } else {
+    //     showAlertDialog(
+    //       context: context,
+    //       title: "oops!",
+    //       description: "Something went wrong, try again later.",
+    //     );
+    //   }
+    // }
   }
 
   _signInWithPhoneOTP(PhoneAuthCredential credential) async {
@@ -233,6 +236,24 @@ class _OtpSendAndVerifyScreenState
                 length: 6,
                 focusNode: _pinPutFocusNode,
                 controller: _pinPutController,
+                defaultPinTheme: PinTheme(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: const Color(0xFFECECEC),
+                    border: Border.all(color: const Color(0xFFB3B3B3)),
+                  ),
+                ),
+                focusedPinTheme: PinTheme(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: const Color(0xFFECECEC),
+                    border: Border.all(color: primaryColor),
+                  ),
+                ),
                 onCompleted: (String pin) async {
                   _pinPutFocusNode.unfocus();
 
