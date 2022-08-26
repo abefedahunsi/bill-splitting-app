@@ -10,6 +10,15 @@ final ThemeData theme = ThemeData(
   backgroundColor: Colors.white,
   fontFamily: "Outfit",
   appBarTheme: const AppBarTheme(
+    surfaceTintColor: Colors.transparent,
+    scrolledUnderElevation: 0,
+    titleTextStyle: TextStyle(
+      fontSize: 16,
+      color: Colors.black,
+      fontFamily: "Outfit",
+    ),
+    centerTitle: true,
+    elevation: 0,
     backgroundColor: Colors.transparent,
     systemOverlayStyle: SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,

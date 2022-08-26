@@ -1,21 +1,24 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:splitty/app/main_screen/main_screen.dart';
 import 'package:splitty/common/alert_dialog.dart';
 import 'package:splitty/config/colors.dart';
+import 'package:splitty/providers/user_provider.dart';
 
+import 'controller/auth_controller.dart';
 import 'otp_send_and_verify_screen.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   String _phoneNumber = '';
 
   @override
@@ -25,19 +28,34 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _isUserLoggedIn() {
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      // remove native splash
-      FlutterNativeSplash.remove();
-
+    FirebaseAuth.instance.authStateChanges().listen((User? user) async {
       // send user to main screen if logged in
       if (user != null) {
-        Navigator.pushAndRemoveUntil(
-          context,
+        NavigatorState navigator = Navigator.of(context);
+        Map<String, dynamic>? userData = await getUserInfo();
+
+        // remove native splash
+        FlutterNativeSplash.remove();
+
+        if (userData != null) {
+          UserModel userModel = UserModel(
+            name: userData["name"] ?? "",
+            phoneNumber: userData["phoneNumber"] ?? "",
+            profileImage: userData["profileImage"] ?? "",
+            upiId: userData["upiId"] ?? "",
+          );
+          ref.read(userProvider.state).state = userModel;
+        }
+
+        navigator.pushAndRemoveUntil(
           MaterialPageRoute(
             builder: (context) => const MainScreen(),
           ),
           (route) => false,
         );
+      } else {
+        // remove native splash
+        FlutterNativeSplash.remove();
       }
     });
   }

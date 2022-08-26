@@ -2,8 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pinput/pinput.dart';
+import 'package:splitty/app/main_screen/main_screen.dart';
+import 'package:splitty/app/login/profile_setup_screen.dart';
 import 'package:splitty/common/alert_dialog.dart';
 import 'package:splitty/config/colors.dart';
+import 'package:splitty/providers/user_provider.dart';
+
+import 'controller/auth_controller.dart';
 
 class OtpSendAndVerifyScreen extends ConsumerStatefulWidget {
   final String phoneNumber;
@@ -28,9 +33,7 @@ class _OtpSendAndVerifyScreenState
   void initState() {
     // send OTP to phone number
 
-    //TODO:
-
-    // sendOTP(phoneNumber: widget.phoneNumber);
+    sendOTP(phoneNumber: widget.phoneNumber);
 
     super.initState();
   }
@@ -88,120 +91,85 @@ class _OtpSendAndVerifyScreenState
   }
 
   void verifyOTP(String otp) async {
-// TODO:
+    setState(() {
+      _isVerifyingOTP = true;
+    });
+    try {
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+          verificationId: _verificationId, smsCode: otp);
+      _signInWithPhoneOTP(credential);
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        _isVerifyingOTP = false;
+      });
 
-    // setState(() {
-    //   _isVerifyingOTP = true;
-    // });
-    // try {
-    //   PhoneAuthCredential credential = PhoneAuthProvider.credential(
-    //       verificationId: _verificationId, smsCode: otp);
-    //   // _signInWithPhoneOTP(credential); //TODO:
-    // } on FirebaseAuthException catch (e) {
-    //   setState(() {
-    //     _isVerifyingOTP = false;
-    //   });
-
-    //   debugPrint(e.toString());
-    //   debugPrint(e.code);
-    //   if (e.code == "invalid-verification-code") {
-    //     showAlertDialog(
-    //       context: context,
-    //       title: "oops!",
-    //       description: "OTP verification failed, provide correct OTP.",
-    //     );
-    //   } else {
-    //     showAlertDialog(
-    //       context: context,
-    //       title: "oops!",
-    //       description: "Something went wrong, try again later.",
-    //     );
-    //   }
-    // }
+      debugPrint(e.toString());
+      debugPrint(e.code);
+      if (e.code == "invalid-verification-code") {
+        showAlertDialog(
+          context: context,
+          title: "oops!",
+          description: "OTP verification failed, provide correct OTP.",
+        );
+      } else {
+        showAlertDialog(
+          context: context,
+          title: "oops!",
+          description: "Something went wrong, try again later.",
+        );
+      }
+    }
   }
 
   _signInWithPhoneOTP(PhoneAuthCredential credential) async {
-    //TODO:
+    User? user = (await auth.signInWithCredential(credential)).user;
 
-    // User? user = (await auth.signInWithCredential(credential)).user;
+    if (user != null) {
+      Map<String, dynamic>? userData = await getUserInfo();
+      if (userData != null) {
+        UserModel userModel = UserModel(
+          name: userData["name"] ?? "",
+          phoneNumber: userData["phoneNumber"] ?? "",
+          profileImage: userData["profileImage"] ?? "",
+          upiId: userData["upiId"] ?? "",
+        );
+        ref.read(userProvider.state).state = userModel;
 
-    // if (user != null) {
-    //   Map<String, dynamic>? userData = await getUserInfo();
-    //   if (userData != null) {
-    //     UserModel userModel = UserModel(
-    //       name: userData["name"] ?? "",
-    //       email: userData["email"] ?? "",
-    //       phoneNumber: userData["phoneNumber"] ?? "",
-    //       role: userData["role"] ?? "",
-    //     );
-    //     ref.read(userProvider.state).state = userModel;
+        if (userModel.name != "" && userModel.phoneNumber != "") {
+          // goto main screen
+          if (!mounted) return;
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const MainScreen(),
+            ),
+            (route) => false,
+          );
+        } else {
+          // goto profile setup
 
-    //     if (userModel.role != "" && userModel.role != "user") {
-    //       if (!mounted) return;
-    //       Navigator.pushAndRemoveUntil(
-    //         context,
-    //         MaterialPageRoute(
-    //           builder: (context) => const POSHomeScreen(),
-    //         ),
-    //         (route) => false,
-    //       );
-    //     } else {
-    //       if (!mounted) return;
-    //       Navigator.pushAndRemoveUntil(
-    //         context,
-    //         MaterialPageRoute(
-    //           builder: (context) => const AccountCreatedScreen(),
-    //         ),
-    //         (route) => false,
-    //       );
-    //     }
-    //   } else {
-    //     addUserInfo(
-    //       email: user.email ?? "",
-    //       userId: user.uid,
-    //       name: user.displayName ?? "",
-    //       phoneNumber: user.phoneNumber ?? "",
-    //     ).then((value) async {
-    //       Map<String, dynamic>? userData = await getUserInfo();
-    //       if (userData != null) {
-    //         UserModel userModel = UserModel(
-    //           name: userData["name"] ?? "",
-    //           email: userData["email"] ?? "",
-    //           phoneNumber: userData["phoneNumber"] ?? "",
-    //           role: userData["role"] ?? "",
-    //         );
-    //         ref.read(userProvider.state).state = userModel;
+          if (!mounted) return;
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const ProfileSetupScreen(),
+            ),
+            (route) => false,
+          );
+        }
+      } else {
+        // goto profile setup
 
-    //         if (userModel.role != "" && userModel.role != "user") {
-    //           if (!mounted) return;
-    //           Navigator.pushAndRemoveUntil(
-    //             context,
-    //             MaterialPageRoute(
-    //               builder: (context) => const POSHomeScreen(),
-    //             ),
-    //             (route) => false,
-    //           );
-    //         } else {
-    //           if (!mounted) return;
-    //           Navigator.pushAndRemoveUntil(
-    //             context,
-    //             MaterialPageRoute(
-    //               builder: (context) => const AccountCreatedScreen(),
-    //             ),
-    //             (route) => false,
-    //           );
-    //         }
-    //       }
-    //     }).catchError((error) {
-    //       String message = error.message;
-    //       showAlertDialog(
-    //         context: context,
-    //         title: "oops!",
-    //         description: message,
-    //       );
-    //     });
-    //   }
-    // }
+        if (!mounted) return;
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const ProfileSetupScreen(),
+          ),
+          (route) => false,
+        );
+      }
+    }
   }
 
   @override
