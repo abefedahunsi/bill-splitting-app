@@ -244,7 +244,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 child: const Text("save"),
               ),
             ),
-            if (widget.isFirstTimeSetup) ...[
+            if (!widget.isFirstTimeSetup) ...[
               const SizedBox(height: 80),
               Container(
                 width: MediaQuery.of(context).size.width,
