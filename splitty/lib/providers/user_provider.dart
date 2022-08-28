@@ -5,12 +5,16 @@ class UserModel {
   final String phoneNumber;
   final String profileImage;
   final String upiId;
+  final bool isMineProfile;
+  final String uid;
 
   const UserModel({
     required this.name,
     required this.phoneNumber,
     required this.profileImage,
-    required this.upiId,
+    required this.uid,
+    this.upiId = '',
+    this.isMineProfile = false,
   });
 }
 
@@ -20,5 +24,6 @@ final StateProvider<UserModel> userProvider = StateProvider<UserModel>(
     phoneNumber: "",
     profileImage: "",
     upiId: "",
+    uid: "",
   ),
 );

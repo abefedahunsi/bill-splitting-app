@@ -43,6 +43,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             phoneNumber: userData["phoneNumber"] ?? "",
             profileImage: userData["profileImage"] ?? "",
             upiId: userData["upiId"] ?? "",
+            uid: user.uid,
+            isMineProfile: true,
           );
           ref.read(userProvider.state).state = userModel;
         }

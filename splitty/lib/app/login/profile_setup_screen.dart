@@ -113,6 +113,8 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 phoneNumber: state.phoneNumber,
                 profileImage: image,
                 upiId: upiId,
+                isMineProfile: true,
+                uid: state.uid,
               ),
             );
 

@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:splitty/app/group_screen/create_group_screen.dart';
 import 'package:splitty/app/login/profile_setup_screen.dart';
 import 'package:splitty/config/images.dart';
 import 'package:splitty/providers/user_provider.dart';
@@ -26,10 +27,17 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
     log("${userInfo.name} ${userInfo.phoneNumber} ${userInfo.upiId} ");
 
+    // if user details are not available, ask user to fill up profile details.
     if (userInfo.name != "" &&
         userInfo.phoneNumber != "" &&
         userInfo.profileImage != "") {
       //
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const CreateGroupScreen(),
+        ),
+      );
     } else {
       _showProfileIncompleteSnackBar();
     }
