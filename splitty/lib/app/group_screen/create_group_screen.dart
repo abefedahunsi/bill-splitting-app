@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:splitty/app/group_screen/components/group_member_list_item.dart';
+import 'package:splitty/app/group_screen/handlers/create_group.dart';
 import 'package:splitty/app/group_screen/handlers/search_user.dart';
 import 'package:splitty/common/alert_dialog.dart';
 import 'package:splitty/providers/user_provider.dart';
@@ -19,6 +22,8 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
 
   final List<UserModel> groupMembers = [];
 
+  bool _isBtnSaveTapped = false;
+
   @override
   void initState() {
     addMyProfileToGroupMembers();
@@ -28,9 +33,7 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
   addMyProfileToGroupMembers() {
     UserModel me = ref.read(userProvider);
 
-    groupMembers.add(
-      me,
-    );
+    groupMembers.add(me);
   }
 
   _searchAndAddMember(String searchValue) async {
@@ -67,6 +70,90 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
         title: "oops!",
         description: "Please provide phone number to search user!",
       );
+    }
+  }
+
+  _btnSaveTap() async {
+    // create group if all details are correct
+
+    try {
+      String groupName = groupNameController.text;
+
+      // check if group name is not empty, else return
+      if (groupName.isEmpty) {
+        showAlertDialog(
+          context: context,
+          title: "oh!",
+          description: "Please provide group name...",
+        );
+        return;
+      }
+
+      // check if there is at least 2 group members
+      if (groupMembers.length < 2) {
+        showAlertDialog(
+          context: context,
+          title: "oops",
+          description: "Please add atleast 1 more Member to create Group.",
+        );
+        return;
+      }
+
+      // prepare array only of UID of Members
+      List<String> membersUID = [];
+      List<Map<String, dynamic>> members = [];
+
+      for (var member in groupMembers) {
+        membersUID.add(member.uid);
+        members.add({
+          'name': member.name,
+          'uid': member.uid,
+          'phoneNumber': member.phoneNumber,
+          'profileImage': member.profileImage,
+        });
+      }
+
+      setState(() {
+        _isBtnSaveTapped = true;
+      });
+
+      ScaffoldMessengerState scaffoldMessengerState =
+          ScaffoldMessenger.of(context);
+      NavigatorState navigatorState = Navigator.of(context);
+
+      final res = await createGroup(
+        name: groupName,
+        membersMeta: membersUID,
+        members: members,
+      );
+
+      if (res != null) {
+        // showAlertDialog(
+        //   context: context,
+        //   title: "Done ✅",
+        //   description: "Group created successfully.",
+        // );
+        scaffoldMessengerState
+            .showSnackBar(SnackBar(content: Text("Group created")));
+        navigatorState.pop();
+      }
+
+      setState(() {
+        _isBtnSaveTapped = false;
+      });
+    } catch (e) {
+      log("$e");
+
+      showAlertDialog(
+        context: context,
+        title: "oops!",
+        description:
+            "something went wrong while creating group, please try again later.",
+      );
+
+      setState(() {
+        _isBtnSaveTapped = false;
+      });
     }
   }
 
@@ -157,7 +244,7 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
             width: MediaQuery.of(context).size.width,
             margin: const EdgeInsets.symmetric(horizontal: 30),
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: _isBtnSaveTapped ? null : _btnSaveTap,
               child: const Text("save"),
             ),
           ),
