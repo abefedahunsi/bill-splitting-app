@@ -44,9 +44,15 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
       if (user != null) {
         // user found
         searchMemberTextController.clear();
-        setState(() {
-          groupMembers.add(user);
-        });
+
+        int indexOfExistedUser =
+            groupMembers.indexWhere((element) => element.uid == user.uid);
+
+        if (indexOfExistedUser == -1) {
+          setState(() {
+            groupMembers.add(user);
+          });
+        }
       } else {
         // user not found
         showAlertDialog(
@@ -132,28 +138,17 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
               color: const Color(0xFFF2F2F2),
               borderRadius: BorderRadius.circular(12),
             ),
-            // child: Column(
-            //   children: [
-            //     ...groupMembers
-            //         .map((member) => GroupMemberListItem(
-            //           name: member.name,
-            //           profileImage: member.profileImage,
-            //           phoneNumber: member.phoneNumber,
-            //           isMineProfile: member.isMineProfile,
-            //         ))
-            //         .toList(),
-            //   ],
-            // ),
             child: ListView.separated(
               shrinkWrap: true,
               physics: const ClampingScrollPhysics(),
-              itemBuilder: ((context, index) => GroupMemberListItem(
-                    name: groupMembers[index].name,
-                    profileImage: groupMembers[index].profileImage,
-                    phoneNumber: groupMembers[index].phoneNumber,
-                    isMineProfile: groupMembers[index].isMineProfile,
-                  )),
-              separatorBuilder: ((context, index) => const Divider()),
+              itemBuilder: (context, index) => GroupMemberListItem(
+                key: Key(groupMembers[index].uid),
+                name: groupMembers[index].name,
+                profileImage: groupMembers[index].profileImage,
+                phoneNumber: groupMembers[index].phoneNumber,
+                isMineProfile: groupMembers[index].isMineProfile,
+              ),
+              separatorBuilder: (context, index) => const Divider(),
               itemCount: groupMembers.length,
             ),
           ),
