@@ -6,7 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
-Future<DocumentReference?> createGroup({
+Future<DocumentSnapshot?> createGroup({
   required String name,
   required List<String> membersMeta,
   required List<Map<String, dynamic>> members,
@@ -25,7 +25,7 @@ Future<DocumentReference?> createGroup({
         'name': name,
       });
 
-      return documentReference;
+      return await documentReference.get();
     } else {
       throw Exception("Unauthorized access!");
     }

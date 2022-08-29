@@ -1,11 +1,12 @@
 import 'dart:developer';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:splitty/app/main_screen/components/my_groups_component_list_skeleton.dart';
 import 'package:splitty/app/main_screen/handlers/group_handler.dart';
+import 'package:splitty/app/main_screen/my_created_group_detail_screen.dart';
 import 'package:splitty/config/colors.dart';
+import 'package:splitty/providers/my_groups_provider.dart';
 
 class MyGroupsComponent extends ConsumerStatefulWidget {
   const MyGroupsComponent({Key? key}) : super(key: key);
@@ -16,7 +17,6 @@ class MyGroupsComponent extends ConsumerStatefulWidget {
 
 class _MyGroupsComponentState extends ConsumerState<MyGroupsComponent> {
   bool _isLoading = true;
-  List<QueryDocumentSnapshot> myGroups = [];
 
   @override
   void initState() {
@@ -26,10 +26,12 @@ class _MyGroupsComponentState extends ConsumerState<MyGroupsComponent> {
 
   _getMyGroups() async {
     try {
-      List<QueryDocumentSnapshot>? res = await getMyGroups();
+      List<MyGroupModel>? res = await getMyGroups();
       if (res != null) {
+        // update state provider for my groups
+        ref.read(myGroupsProvider.state).state = res;
+
         setState(() {
-          myGroups.addAll(res);
           _isLoading = false;
         });
         return;
@@ -49,6 +51,8 @@ class _MyGroupsComponentState extends ConsumerState<MyGroupsComponent> {
 
   @override
   Widget build(BuildContext context) {
+    final myGroups = ref.watch(myGroupsProvider);
+
     return Column(
       children: [
         Container(
@@ -80,79 +84,86 @@ class _MyGroupsComponentState extends ConsumerState<MyGroupsComponent> {
                 physics: const BouncingScrollPhysics(),
                 itemCount: myGroups.length,
                 itemBuilder: (ctx, index) {
-                  QueryDocumentSnapshot group = myGroups[index];
-                  Map<String, dynamic>? groupData =
-                      group.data() as Map<String, dynamic>?;
+                  MyGroupModel group = myGroups[index];
+                  Map<String, dynamic> groupData = group.data;
 
-                  if (groupData != null) {
-                    String groupName = groupData["name"] ?? "";
-                    String createdBy = "ME";
-                    dynamic members = groupData["members"] ?? [];
-                    int totalMembers = members.length ?? 0;
+                  String groupName = groupData["name"] ?? "";
+                  String createdBy = "ME";
+                  dynamic members = groupData["members"] ?? [];
+                  int totalMembers = members.length ?? 0;
 
-                    return GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        height: 200,
-                        width: 180,
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 20, horizontal: 18),
-                        margin: EdgeInsets.only(
-                            left: index == 0 ? 30 : 10,
-                            right: index == myGroups.length - 1 ? 30 : 10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: const Color(0xFFE6E6E6),
-                            width: 1,
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MyCreatedGroupDetailScreen(
+                            docid: group.id,
+                            screenTitle: groupName,
+                            groupData: groupData,
                           ),
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  groupName,
-                                  maxLines: 3,
-                                  softWrap: true,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontSize: 22,
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  "Created by $createdBy",
-                                  style: TextStyle(
-                                    color: primarySwatch.shade400,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.people_outline,
-                                  color: Color(0xFF888888),
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  "$totalMembers Members",
-                                  style: const TextStyle(
-                                    color: Color(0xFF888888),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+                      );
+                    },
+                    child: Container(
+                      height: 200,
+                      width: 180,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 20, horizontal: 18),
+                      margin: EdgeInsets.only(
+                          left: index == 0 ? 30 : 10,
+                          right: index == myGroups.length - 1 ? 30 : 10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: const Color(0xFFE6E6E6),
+                          width: 1,
                         ),
                       ),
-                    );
-                  }
-                  return Container();
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                groupName,
+                                maxLines: 3,
+                                softWrap: true,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                "Created by $createdBy",
+                                style: TextStyle(
+                                  color: primarySwatch.shade400,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.people_outline,
+                                color: Color(0xFF888888),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                "$totalMembers Members",
+                                style: const TextStyle(
+                                  color: Color(0xFF888888),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
                 },
               ),
             ),

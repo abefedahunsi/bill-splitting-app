@@ -6,6 +6,7 @@ import 'package:splitty/app/group_screen/components/group_member_list_item.dart'
 import 'package:splitty/app/group_screen/handlers/create_group.dart';
 import 'package:splitty/app/group_screen/handlers/search_user.dart';
 import 'package:splitty/common/alert_dialog.dart';
+import 'package:splitty/providers/my_groups_provider.dart';
 import 'package:splitty/providers/user_provider.dart';
 
 class CreateGroupScreen extends ConsumerStatefulWidget {
@@ -128,11 +129,17 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
       );
 
       if (res != null) {
-        // showAlertDialog(
-        //   context: context,
-        //   title: "Done ✅",
-        //   description: "Group created successfully.",
-        // );
+        Map<String, dynamic>? newlyCreatedGroupData =
+            res.data() as Map<String, dynamic>?;
+        if (newlyCreatedGroupData != null) {
+          List<MyGroupModel> myGroups = ref.read(myGroupsProvider);
+          MyGroupModel newlyCreatedGroup =
+              MyGroupModel(id: res.id, data: newlyCreatedGroupData);
+          myGroups = [newlyCreatedGroup, ...myGroups];
+
+          // update the my group state provider
+          ref.read(myGroupsProvider.state).state = myGroups;
+        }
 
         scaffoldMessengerState.showSnackBar(
           SnackBar(
@@ -257,7 +264,7 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
             margin: const EdgeInsets.symmetric(horizontal: 30),
             child: ElevatedButton(
               onPressed: _isBtnSaveTapped ? null : _btnSaveTap,
-              child: const Text("save"),
+              child: Text(_isBtnSaveTapped ? "Please wait..." : "save"),
             ),
           ),
         ],
