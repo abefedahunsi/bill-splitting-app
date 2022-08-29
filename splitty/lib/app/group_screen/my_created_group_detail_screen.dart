@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:splitty/app/group_screen/create_bill_screen.dart';
 
 class MyCreatedGroupDetailScreen extends StatelessWidget {
   final String screenTitle;
@@ -37,7 +38,17 @@ class MyCreatedGroupDetailScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton.extended(
         icon: const Icon(Icons.add_rounded),
         label: const Text("create bill"),
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CreateBillScreen(
+                docid: docid,
+                groupData: groupData,
+              ),
+            ),
+          );
+        },
       ),
     );
   }

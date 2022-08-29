@@ -124,8 +124,8 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
 
       final res = await createGroup(
         name: groupName,
-        membersMeta: membersUID,
-        members: members,
+        membersMeta: members,
+        members: membersUID,
       );
 
       if (res != null) {

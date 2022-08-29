@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:splitty/app/main_screen/components/my_groups_component_list_skeleton.dart';
 import 'package:splitty/app/main_screen/handlers/group_handler.dart';
-import 'package:splitty/app/main_screen/my_created_group_detail_screen.dart';
+import 'package:splitty/app/group_screen/my_created_group_detail_screen.dart';
 import 'package:splitty/config/colors.dart';
 import 'package:splitty/providers/my_groups_provider.dart';
 

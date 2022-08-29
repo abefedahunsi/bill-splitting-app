@@ -8,8 +8,8 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
 
 Future<DocumentSnapshot?> createGroup({
   required String name,
-  required List<String> membersMeta,
-  required List<Map<String, dynamic>> members,
+  required List<String> members,
+  required List<Map<String, dynamic>> membersMeta,
 }) async {
   try {
     User? user = _auth.currentUser;
