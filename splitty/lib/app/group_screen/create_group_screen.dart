@@ -133,8 +133,20 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
         //   title: "Done ✅",
         //   description: "Group created successfully.",
         // );
-        scaffoldMessengerState
-            .showSnackBar(SnackBar(content: Text("Group created")));
+
+        scaffoldMessengerState.showSnackBar(
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            backgroundColor: const Color(0xFFe5e5e5),
+            content: const Text(
+              "Group Created ✅",
+              style: TextStyle(color: Colors.black, fontFamily: "Outfit"),
+            ),
+          ),
+        );
         navigatorState.pop();
       }
 

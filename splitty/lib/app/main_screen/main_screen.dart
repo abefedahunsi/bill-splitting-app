@@ -56,15 +56,16 @@ class _MainScreenState extends ConsumerState<MainScreen> {
           style: TextStyle(color: Colors.black, fontFamily: "Outfit"),
         ),
         action: SnackBarAction(
-            label: "Update",
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ProfileSetupScreen(),
-                ),
-              );
-            }),
+          label: "Update",
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ProfileSetupScreen(),
+              ),
+            );
+          },
+        ),
         duration: const Duration(seconds: 12),
       ),
     );
