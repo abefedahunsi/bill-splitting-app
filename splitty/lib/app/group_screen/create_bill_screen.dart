@@ -1,13 +1,16 @@
 import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:splitty/app/group_screen/components/bill_split_select_member_item.dart';
 import 'package:splitty/app/group_screen/handlers/bill_handler.dart';
 import 'package:splitty/common/alert_dialog.dart';
 import 'package:splitty/config/images.dart';
+import 'package:splitty/providers/current_group_bills_provider.dart';
 
-class CreateBillScreen extends StatefulWidget {
+class CreateBillScreen extends ConsumerStatefulWidget {
   final String docid;
   final Map<String, dynamic> groupData;
   const CreateBillScreen({
@@ -17,10 +20,10 @@ class CreateBillScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<CreateBillScreen> createState() => _CreateBillScreenState();
+  ConsumerState<CreateBillScreen> createState() => _CreateBillScreenState();
 }
 
-class _CreateBillScreenState extends State<CreateBillScreen> {
+class _CreateBillScreenState extends ConsumerState<CreateBillScreen> {
   final TextEditingController billNameController = TextEditingController();
   final TextEditingController billAmountController = TextEditingController();
 
@@ -133,9 +136,7 @@ class _CreateBillScreenState extends State<CreateBillScreen> {
         _isBtnSaveTapped = true;
       });
 
-      //TODO: get created bill document
-
-      await createBill(
+      DocumentSnapshot? createdBill = await createBill(
         groupId: widget.docid,
         billName: billName,
         billAmount: billAmount,
@@ -144,25 +145,41 @@ class _CreateBillScreenState extends State<CreateBillScreen> {
         billMembers: billSplitMembers,
       );
 
-      //TODO: update bill provider state
+      if (createdBill != null) {
+        Map<String, dynamic>? createdBillData =
+            createdBill.data() as Map<String, dynamic>?;
 
-      // show message that bill is created
-      scaffoldMessengerState.showSnackBar(
-        SnackBar(
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          backgroundColor: const Color(0xFFe5e5e5),
-          content: const Text(
-            "Bill Created ✅",
-            style: TextStyle(color: Colors.black, fontFamily: "Outfit"),
-          ),
-        ),
-      );
+        if (createdBillData != null) {
+          List<CurrentGroupBillModel> currentGroupBills =
+              ref.read(currentGroupBillsProvider);
+          CurrentGroupBillModel newBill = CurrentGroupBillModel(
+            id: createdBill.id,
+            data: createdBillData,
+          );
 
-      // pop current screen
-      navigatorState.pop();
+          currentGroupBills = [newBill, ...currentGroupBills];
+
+          ref.read(currentGroupBillsProvider.state).state = currentGroupBills;
+        }
+
+        // show message that bill is created
+        scaffoldMessengerState.showSnackBar(
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            backgroundColor: const Color(0xFFe5e5e5),
+            content: const Text(
+              "Bill Created ✅",
+              style: TextStyle(color: Colors.black, fontFamily: "Outfit"),
+            ),
+          ),
+        );
+
+        // pop current screen
+        navigatorState.pop();
+      }
     } catch (e) {
       showAlertDialog(
         context: context,
