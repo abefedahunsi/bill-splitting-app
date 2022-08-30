@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:splitty/app/group_screen/components/bill_split_select_member_item.dart';
+import 'package:splitty/app/group_screen/handlers/bill_handler.dart';
+import 'package:splitty/common/alert_dialog.dart';
 import 'package:splitty/config/images.dart';
 
 class CreateBillScreen extends StatefulWidget {
@@ -90,17 +92,85 @@ class _CreateBillScreenState extends State<CreateBillScreen> {
 
   _btnSaveTap() async {
     // save bill details
-    setState(() {
-      _isBtnSaveTapped = true;
-    });
 
     // fetch details
+    String billName = billNameController.text;
+    num? billAmount = num.tryParse(billAmountController.text);
 
-    //TODO: add the bill details to DB.
+    if (billName.isEmpty) {
+      showAlertDialog(
+        context: context,
+        title: "oops!",
+        description: "Please provide Bill Name...",
+      );
+      return;
+    }
 
-    setState(() {
-      _isBtnSaveTapped = false;
-    });
+    if (billAmount == null || billAmount <= 0) {
+      showAlertDialog(
+        context: context,
+        title: "Bill Amount 🔴",
+        description: "Please provide Bill amount...",
+      );
+      return;
+    }
+
+    if (billSplitMembers.length < 2) {
+      showAlertDialog(
+        context: context,
+        title: "Select Members 🔴",
+        description: "Please select 2 or more members to split the bill.",
+      );
+      return;
+    }
+
+    try {
+      ScaffoldMessengerState scaffoldMessengerState =
+          ScaffoldMessenger.of(context);
+      NavigatorState navigatorState = Navigator.of(context);
+
+      setState(() {
+        _isBtnSaveTapped = true;
+      });
+
+      await createBill(
+        groupId: widget.docid,
+        billName: billName,
+        billAmount: billAmount,
+        billType: billType,
+        billTypeImage: billTypeImage,
+        billMembers: billSplitMembers,
+      );
+
+      // show message that bill is created
+      scaffoldMessengerState.showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          backgroundColor: const Color(0xFFe5e5e5),
+          content: const Text(
+            "Bill Created ✅",
+            style: TextStyle(color: Colors.black, fontFamily: "Outfit"),
+          ),
+        ),
+      );
+
+      // pop current screen
+      navigatorState.pop();
+    } catch (e) {
+      showAlertDialog(
+        context: context,
+        title: "oops!",
+        description:
+            "Something went wrong while creating bill. try again later.\n$e",
+      );
+      log("$e");
+      setState(() {
+        _isBtnSaveTapped = false;
+      });
+    }
   }
 
   @override
