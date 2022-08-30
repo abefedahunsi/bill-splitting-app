@@ -133,6 +133,8 @@ class _CreateBillScreenState extends State<CreateBillScreen> {
         _isBtnSaveTapped = true;
       });
 
+      //TODO: get created bill document
+
       await createBill(
         groupId: widget.docid,
         billName: billName,
@@ -141,6 +143,8 @@ class _CreateBillScreenState extends State<CreateBillScreen> {
         billTypeImage: billTypeImage,
         billMembers: billSplitMembers,
       );
+
+      //TODO: update bill provider state
 
       // show message that bill is created
       scaffoldMessengerState.showSnackBar(
