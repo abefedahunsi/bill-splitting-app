@@ -6,6 +6,7 @@ import 'package:splitty/app/group_screen/components/bill_item_skeleton.dart';
 import 'package:splitty/app/group_screen/components/bill_list_item.dart';
 import 'package:splitty/app/group_screen/create_bill_screen.dart';
 import 'package:splitty/app/group_screen/handlers/bill_handler.dart';
+import 'package:splitty/app/group_screen/mybill_detail_screen.dart';
 import 'package:splitty/config/images.dart';
 import 'package:splitty/providers/current_group_bills_provider.dart';
 
@@ -81,8 +82,16 @@ class _MyCreatedGroupDetailScreenState
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             itemBuilder: (c) => [
-              PopupMenuItem(child: const Text("Group Details"), onTap: () {}),
-              PopupMenuItem(child: const Text("Total Expense"), onTap: () {}),
+              PopupMenuItem(
+                  child: const Text("Group Details"),
+                  onTap: () {
+                    //TODO: show group details into separate screen
+                  }),
+              PopupMenuItem(
+                  child: const Text("Total Expense"),
+                  onTap: () {
+                    //TODO: show total expense of group
+                  }),
             ],
             icon: const Icon(Icons.more_vert),
           )
@@ -123,8 +132,17 @@ class _MyCreatedGroupDetailScreenState
 
                     return GestureDetector(
                       onTap: () {
-                        //TODO: open bill detail screen
-                        log(id);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MyBillDetailScreen(
+                              groupName: widget.screenTitle,
+                              groupId: widget.docid,
+                              groupData: widget.groupData,
+                              billId: id,
+                            ),
+                          ),
+                        );
                       },
                       child: BillListItem(
                         billName: billName,

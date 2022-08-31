@@ -134,6 +134,11 @@ class _MainScreenState extends ConsumerState<MainScreen> {
           // my groups section
           const MyGroupsComponent(),
           // my groups section
+
+          // groups to pay
+          //TODO: fetch groups that user needs to pay
+
+          // groups to pay
         ],
       ),
     );

@@ -68,7 +68,9 @@ class _MyGroupsComponentState extends ConsumerState<MyGroupsComponent> {
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  //TODO: fetch my created groups all with pagination and lazyload
+                },
                 child: const Text("View All"),
               ),
             ],
