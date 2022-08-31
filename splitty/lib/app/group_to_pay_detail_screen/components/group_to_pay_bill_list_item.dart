@@ -9,6 +9,7 @@ class GroupToPayBillListItem extends StatelessWidget {
   final bool needToPay;
   final bool billPaid;
   final GestureTapCallback onPayTap;
+  final bool showPaymentBtn;
 
   const GroupToPayBillListItem({
     Key? key,
@@ -19,6 +20,7 @@ class GroupToPayBillListItem extends StatelessWidget {
     required this.needToPay,
     required this.billPaid,
     required this.onPayTap,
+    required this.showPaymentBtn,
   }) : super(key: key);
 
   @override
@@ -97,27 +99,30 @@ class GroupToPayBillListItem extends StatelessWidget {
                 ),
               ),
               if (needToPay) ...[
-                if (!billPaid) ...[
-                  Flexible(
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        padding: MaterialStateProperty.all(
-                          const EdgeInsets.symmetric(horizontal: 14),
+                if (showPaymentBtn) ...[
+                  if (!billPaid) ...[
+                    Flexible(
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          padding: MaterialStateProperty.all(
+                            const EdgeInsets.symmetric(horizontal: 14),
+                          ),
+                          shape:
+                              MaterialStateProperty.all(const StadiumBorder()),
                         ),
-                        shape: MaterialStateProperty.all(const StadiumBorder()),
-                      ),
-                      onPressed: onPayTap,
-                      child: Text(
-                        "Pay ₹$splitAmount",
+                        onPressed: onPayTap,
+                        child: Text(
+                          "Pay ₹$splitAmount",
+                        ),
                       ),
                     ),
-                  ),
-                ] else ...[
-                  Text(
-                    "Paid ₹$splitAmount",
-                    style: const TextStyle(color: Color(0xFF397C37)),
-                  ),
-                ]
+                  ] else ...[
+                    Text(
+                      "Paid ₹$splitAmount",
+                      style: const TextStyle(color: Color(0xFF397C37)),
+                    ),
+                  ],
+                ],
               ] else ...[
                 const Text(
                   "No need to pay!",

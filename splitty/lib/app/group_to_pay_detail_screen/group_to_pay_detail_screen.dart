@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:splitty/app/group_screen/handlers/bill_handler.dart';
+import 'package:splitty/app/group_to_pay_detail_screen/bill_detail_screen.dart';
 import 'package:splitty/app/group_to_pay_detail_screen/components/group_to_pay_bill_list_item.dart';
 import 'package:splitty/app/group_to_pay_detail_screen/handlers/get_my_uid.dart';
 import 'package:splitty/app/group_to_pay_detail_screen/handlers/pay_bill_handler.dart';
@@ -318,19 +319,17 @@ class _GroupToPayDetailScreenState
 
                     return GestureDetector(
                       onTap: () {
-                        //TODO: open bill detail
-
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => MyBillDetailScreen(
-                        //       groupName: widget.screenTitle,
-                        //       groupId: widget.docid,
-                        //       groupData: widget.groupData,
-                        //       billId: id,
-                        //     ),
-                        //   ),
-                        // );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => BillDetailScreen(
+                              groupName: widget.screenTitle,
+                              groupId: widget.docid,
+                              groupData: widget.groupData,
+                              billId: id,
+                            ),
+                          ),
+                        );
                       },
                       child: GroupToPayBillListItem(
                         billName: billName,
@@ -339,6 +338,7 @@ class _GroupToPayDetailScreenState
                         billTypeImage: billTypeImage,
                         needToPay: needToPay,
                         billPaid: billPaid,
+                        showPaymentBtn: true,
                         onPayTap: () {
                           _showPaymentOption(
                               uid: uid, billId: id, splitAmount: splitAmount);
