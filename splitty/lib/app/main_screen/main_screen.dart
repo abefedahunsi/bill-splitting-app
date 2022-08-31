@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:splitty/app/group_screen/create_group_screen.dart';
 import 'package:splitty/app/login/profile_setup_screen.dart';
+import 'package:splitty/app/main_screen/components/groups_to_pay_component.dart';
 import 'package:splitty/app/main_screen/components/my_groups_component.dart';
 import 'package:splitty/config/images.dart';
 import 'package:splitty/providers/user_provider.dart';
@@ -135,9 +136,10 @@ class _MainScreenState extends ConsumerState<MainScreen> {
           const MyGroupsComponent(),
           // my groups section
 
-          // groups to pay
-          //TODO: fetch groups that user needs to pay
+          const SizedBox(height: 20),
 
+          // groups to pay
+          const GroupsToPayComponent(),
           // groups to pay
         ],
       ),
