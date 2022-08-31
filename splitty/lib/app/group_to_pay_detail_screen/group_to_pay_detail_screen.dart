@@ -9,6 +9,8 @@ import 'package:splitty/app/group_to_pay_detail_screen/handlers/pay_bill_handler
 import 'package:splitty/common/alert_dialog.dart';
 import 'package:splitty/config/images.dart';
 import 'package:splitty/providers/current_group_bills_provider.dart';
+import 'package:splitty/providers/user_provider.dart';
+import 'package:splitty/util/launch_upi_intent.dart';
 
 import '../group_screen/components/bill_item_skeleton.dart';
 
@@ -69,6 +71,7 @@ class _GroupToPayDetailScreenState
   _showPaymentOption({
     required String uid,
     required String billId,
+    required num splitAmount,
   }) {
     showModalBottomSheet(
       context: context,
@@ -110,7 +113,11 @@ class _GroupToPayDetailScreenState
                     leading: const Icon(Icons.currency_rupee),
                     title: const Text("Pay Using UPI"),
                     onTap: () {
-                      //TODO: add upi payment
+                      _payBillUsingUPI(
+                          billId: billId,
+                          memberId: uid,
+                          splitAmount: splitAmount);
+                      Navigator.pop(ctx);
                     },
                   ),
                 ],
@@ -126,42 +133,127 @@ class _GroupToPayDetailScreenState
     required String memberId,
     required String billId,
   }) async {
-    ScaffoldMessengerState scaffoldMessengerState =
-        ScaffoldMessenger.of(context);
+    try {
+      ScaffoldMessengerState scaffoldMessengerState =
+          ScaffoldMessenger.of(context);
 
-    await payBillUsingCash(
-      groupId: widget.docid,
-      billId: billId,
-      memberId: memberId,
-    );
+      await payBillUsingCash(
+        groupId: widget.docid,
+        billId: billId,
+        memberId: memberId,
+      );
 
-    // fetch updated details &
-    // update state provider
+      // fetch updated details &
+      // update the state
+      List<CurrentGroupBillModel>? bills =
+          await getBills(groupId: widget.docid);
 
-    // update the state
-    List<CurrentGroupBillModel>? bills = await getBills(groupId: widget.docid);
+      if (bills != null) {
+        ref.read(currentGroupBillsProvider.state).state = bills;
+      }
 
-    if (bills != null) {
-      ref.read(currentGroupBillsProvider.state).state = bills;
-    }
-
-    // show message
-    scaffoldMessengerState.showSnackBar(
-      SnackBar(
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        backgroundColor: const Color(0xFFe5e5e5),
-        content: const Text(
-          "Bill Split marked as Paid ✅",
-          style: TextStyle(
-            color: Colors.black,
-            fontFamily: "Outfit",
+      // show message
+      scaffoldMessengerState.showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          backgroundColor: const Color(0xFFe5e5e5),
+          content: const Text(
+            "Bill Split marked as Paid ✅",
+            style: TextStyle(
+              color: Colors.black,
+              fontFamily: "Outfit",
+            ),
           ),
         ),
-      ),
-    );
+      );
+    } catch (e) {
+      showAlertDialog(
+          context: context,
+          title: "oops",
+          description: "Something went wrong!\n$e");
+      log("$e", name: "group_to_pay_detail_screen.dart");
+    }
+  }
+
+  _payBillUsingUPI({
+    required String billId,
+    required String memberId,
+    required num splitAmount,
+  }) async {
+    //TODO: complete pay using UPI option, show users payment details in model, and show button
+    // to pay or cancel the current option,
+    // on tap of pay, open UPI app, and mark as paid
+
+    try {
+      ScaffoldMessengerState scaffoldMessengerState =
+          ScaffoldMessenger.of(context);
+
+      // find upi of group creator
+      String groupCreatorUid = widget.groupData["createdBy"];
+      UserModel? groupCreatorUser = await getUPIOfUser(uid: groupCreatorUid);
+
+      if (groupCreatorUser == null || groupCreatorUser.upiId.isEmpty) {
+        showAlertDialog(
+          context: context,
+          title: "oops",
+          description: "recipient havn't added UPI, you can pay using cash.",
+        );
+        return;
+      }
+
+      // open upi intent
+      bool res = await launchUPIApp(
+        upiAddress: groupCreatorUser.upiId,
+        name: groupCreatorUser.name,
+        amount: splitAmount,
+        message: "${widget.screenTitle} payment ",
+      );
+
+      log("$res");
+
+      // // save info to DB
+      // await payBillUsingUPI(
+      //   groupId: widget.docid,
+      //   billId: billId,
+      //   memberId: memberId,
+      // );
+
+      // // fetch updated details &
+      // // update the state
+      // List<CurrentGroupBillModel>? bills =
+      //     await getBills(groupId: widget.docid);
+
+      // if (bills != null) {
+      //   ref.read(currentGroupBillsProvider.state).state = bills;
+      // }
+
+      // show message
+      scaffoldMessengerState.showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          backgroundColor: const Color(0xFFe5e5e5),
+          content: const Text(
+            "Bill Split marked as Paid ✅",
+            style: TextStyle(
+              color: Colors.black,
+              fontFamily: "Outfit",
+            ),
+          ),
+        ),
+      );
+    } catch (e) {
+      showAlertDialog(
+          context: context,
+          title: "oops",
+          description: "Something went wrong!\n$e");
+      log("$e", name: "group_to_pay_detail_screen.dart");
+    }
   }
 
   @override
@@ -222,6 +314,8 @@ class _GroupToPayDetailScreenState
                     bool needToPay = members.contains(uid);
                     bool billPaid = billPaidByMembers.contains(uid);
 
+                    num splitAmount = (billAmount / members.length);
+
                     return GestureDetector(
                       onTap: () {
                         //TODO: open bill detail
@@ -246,9 +340,8 @@ class _GroupToPayDetailScreenState
                         needToPay: needToPay,
                         billPaid: billPaid,
                         onPayTap: () {
-                          //TODO: show payment option and mark as paid
-
-                          _showPaymentOption(uid: uid, billId: id);
+                          _showPaymentOption(
+                              uid: uid, billId: id, splitAmount: splitAmount);
                         },
                       ),
                     );

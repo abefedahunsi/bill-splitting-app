@@ -115,6 +115,7 @@ class MyBillDetailScreen extends ConsumerWidget {
                             color: Color(0xFF397C37),
                           ),
                         ),
+                        //TODO: add mark as not paid button
                       ] else ...[
                         Row(
                           children: [
