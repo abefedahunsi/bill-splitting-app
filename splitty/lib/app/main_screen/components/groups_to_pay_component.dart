@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:splitty/app/group_to_pay_detail_screen/group_to_pay_detail_screen.dart';
 import 'package:splitty/app/main_screen/components/groups_to_pay_skeleton_list.dart';
 import 'package:splitty/app/main_screen/handlers/group_handler.dart';
 import 'package:splitty/config/colors.dart';
@@ -104,7 +105,16 @@ class _GroupsToPayComponentState extends ConsumerState<GroupsToPayComponent> {
 
                 return GestureDetector(
                   onTap: () {
-                    //TODO: open group to pay screen detail
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => GroupToPayDetailScreen(
+                          screenTitle: groupName,
+                          docid: group.id,
+                          groupData: groupData,
+                        ),
+                      ),
+                    );
                   },
                   child: Container(
                     margin:

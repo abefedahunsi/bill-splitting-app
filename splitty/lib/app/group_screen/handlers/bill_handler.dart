@@ -45,7 +45,7 @@ Future<List<CurrentGroupBillModel>?> getBills({
         .doc(groupId)
         .collection("bills")
         .orderBy("date", descending: true)
-        .limit(20)
+        .limit(50)
         .get();
 
     if (querySnapshot.docs.isNotEmpty) {
