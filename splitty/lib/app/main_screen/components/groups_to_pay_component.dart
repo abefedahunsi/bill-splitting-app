@@ -2,8 +2,10 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:splitty/app/main_screen/components/groups_to_pay_skeleton_list.dart';
 import 'package:splitty/app/main_screen/handlers/group_handler.dart';
 import 'package:splitty/config/colors.dart';
+import 'package:splitty/packages/shimmer/shimmer.dart';
 import 'package:splitty/providers/groups_to_pay_provider.dart';
 import 'package:splitty/providers/my_groups_provider.dart';
 
@@ -178,8 +180,7 @@ class _GroupsToPayComponentState extends ConsumerState<GroupsToPayComponent> {
             )
           ],
         ] else ...[
-          //TODO: shimmer loading
-          Container(),
+          const GroupsToPaySkeletonList(),
         ],
       ],
     );
