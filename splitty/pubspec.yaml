@@ -17,6 +17,7 @@ dependencies:
   cached_network_image: ^3.2.1
   intl_phone_field: ^3.1.0
   url_launcher: ^6.1.4
+  timeago: ^3.3.0
 
   firebase_core: ^1.21.1
   firebase_auth: ^3.7.0

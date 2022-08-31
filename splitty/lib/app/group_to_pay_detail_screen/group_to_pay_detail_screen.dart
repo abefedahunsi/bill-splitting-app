@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:splitty/app/group_screen/handlers/bill_handler.dart';
 import 'package:splitty/app/group_to_pay_detail_screen/bill_detail_screen.dart';
 import 'package:splitty/app/group_to_pay_detail_screen/components/group_to_pay_bill_list_item.dart';
+import 'package:splitty/app/group_to_pay_detail_screen/group_information_screen.dart';
 import 'package:splitty/app/group_to_pay_detail_screen/handlers/get_my_uid.dart';
 import 'package:splitty/app/group_to_pay_detail_screen/handlers/pay_bill_handler.dart';
 import 'package:splitty/common/alert_dialog.dart';
@@ -14,6 +15,7 @@ import 'package:splitty/providers/user_provider.dart';
 import 'package:splitty/util/launch_upi_intent.dart';
 
 import '../group_screen/components/bill_item_skeleton.dart';
+import 'group_total_expense_screen.dart';
 
 class GroupToPayDetailScreen extends ConsumerStatefulWidget {
   final String screenTitle;
@@ -272,24 +274,32 @@ class _GroupToPayDetailScreenState
           softWrap: true,
         ),
         actions: [
-          PopupMenuButton(
-            color: Colors.grey[50],
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            itemBuilder: (c) => [
-              PopupMenuItem(
-                  child: const Text("Group Details"),
-                  onTap: () {
-                    //TODO: show group details into separate screen
-                  }),
-              PopupMenuItem(
-                  child: const Text("Total Expense"),
-                  onTap: () {
-                    //TODO: show total expense of group
-                  }),
-            ],
-            icon: const Icon(Icons.more_vert),
-          )
+          IconButton(
+            icon: const Icon(Icons.info_outline_rounded),
+            tooltip: "group information",
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => GroupInformationScreen(
+                      groupData: widget.groupData,
+                      groupName: widget.screenTitle),
+                ),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.currency_rupee),
+            tooltip: "total expense",
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const GroupTotalExpenseScreen(),
+                ),
+              );
+            },
+          ),
         ],
       ),
       body: _isLoading
