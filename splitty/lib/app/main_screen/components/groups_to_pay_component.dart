@@ -189,9 +189,12 @@ class _GroupsToPayComponentState extends ConsumerState<GroupsToPayComponent> {
             ),
           ] else ...[
             // show empty groups message
-            const Text(
-              "No Groups found! When someone adds you into the group, you will see them here.",
-              textAlign: TextAlign.center,
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 30),
+              child: Text(
+                "No Groups found! When someone adds you into the group, you will see them here.",
+                textAlign: TextAlign.center,
+              ),
             )
           ],
         ] else ...[

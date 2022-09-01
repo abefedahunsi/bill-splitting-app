@@ -177,7 +177,10 @@ class _MyGroupsComponentState extends ConsumerState<MyGroupsComponent> {
             ),
           ] else ...[
             // show empty groups message
-            const Text("No Groups found! Create a group to see it here...")
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 30),
+              child: Text("No Groups found! Create a group to see it here..."),
+            )
           ],
         ] else ...[
           // skeleton
