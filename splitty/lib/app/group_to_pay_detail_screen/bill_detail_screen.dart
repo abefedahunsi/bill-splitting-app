@@ -118,7 +118,7 @@ class BillDetailScreen extends ConsumerWidget {
                       if (billMembers.contains(uid)) ...[
                         if (billPaidByMembers.contains(uid)) ...[
                           Text(
-                            "Paid ₹$splitAmount",
+                            "Paid ₹${splitAmount.toStringAsFixed(2)}",
                             style: const TextStyle(
                               color: Color(0xFF397C37),
                             ),
