@@ -422,7 +422,10 @@ class _GroupToPayDetailScreenState
                         showPaymentBtn: true,
                         onPayTap: () {
                           _showPaymentOption(
-                              uid: uid, billId: id, splitAmount: splitAmount);
+                              uid: uid,
+                              billId: id,
+                              splitAmount:
+                                  num.parse(splitAmount.toStringAsFixed(2)));
                         },
                       ),
                     );

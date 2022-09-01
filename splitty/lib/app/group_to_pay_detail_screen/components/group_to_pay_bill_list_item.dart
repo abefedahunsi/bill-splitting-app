@@ -112,13 +112,13 @@ class GroupToPayBillListItem extends StatelessWidget {
                         ),
                         onPressed: onPayTap,
                         child: Text(
-                          "Pay ₹$splitAmount",
+                          "Pay ₹$splitAmountString",
                         ),
                       ),
                     ),
                   ] else ...[
                     Text(
-                      "Paid ₹$splitAmount",
+                      "Paid ₹$splitAmountString",
                       style: const TextStyle(color: Color(0xFF397C37)),
                     ),
                   ],
