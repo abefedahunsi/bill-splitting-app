@@ -109,13 +109,69 @@ class MyBillDetailScreen extends ConsumerWidget {
                         ],
                       ),
                       if (billPaidByMembers.contains(uid)) ...[
-                        Text(
-                          "Paid ₹$splitAmount",
-                          style: const TextStyle(
-                            color: Color(0xFF397C37),
-                          ),
+                        Row(
+                          children: [
+                            Text(
+                              "Paid ₹$splitAmount",
+                              style: const TextStyle(
+                                color: Color(0xFF397C37),
+                              ),
+                            ),
+                            PopupMenuButton(
+                              color: Colors.grey[50],
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                              itemBuilder: (ctx) => [
+                                PopupMenuItem(
+                                  child: const Text("Mark as Not Paid"),
+                                  onTap: () async {
+                                    ScaffoldMessengerState
+                                        scaffoldMessengerState =
+                                        ScaffoldMessenger.of(context);
+
+                                    // mark bill split for member as paid
+                                    await billMarkAsNotPaidForUser(
+                                      groupId: groupId,
+                                      billId: billId,
+                                      memberId: uid,
+                                    );
+
+                                    // update the state
+                                    List<CurrentGroupBillModel>? bills =
+                                        await getBills(groupId: groupId);
+
+                                    if (bills != null) {
+                                      ref
+                                          .read(currentGroupBillsProvider.state)
+                                          .state = bills;
+                                    }
+
+                                    // show message
+                                    scaffoldMessengerState.showSnackBar(
+                                      SnackBar(
+                                        behavior: SnackBarBehavior.floating,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        backgroundColor:
+                                            const Color(0xFFe5e5e5),
+                                        content: const Text(
+                                          "Bill Split marked as Not Paid ✅",
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontFamily: "Outfit",
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                )
+                              ],
+                              icon: const Icon(Icons.more_vert),
+                            ),
+                          ],
                         ),
-                        //TODO: add mark as not paid button
                       ] else ...[
                         Row(
                           children: [

@@ -87,3 +87,23 @@ Future<void> billMarkAsPaidForUser(
     throw Exception("Error while marking bill split paid.\n$e");
   }
 }
+
+// mark bill as not paid
+Future<void> billMarkAsNotPaidForUser(
+    {required String groupId,
+    required String billId,
+    required String memberId}) async {
+  try {
+    await _firestore
+        .collection("groups")
+        .doc(groupId)
+        .collection("bills")
+        .doc(billId)
+        .update({
+      "billPaidByMembers": FieldValue.arrayRemove([memberId]),
+    });
+  } catch (e) {
+    log("$e", name: "bill_handler.dart");
+    throw Exception("Error while marking bill split not paid.\n$e");
+  }
+}
