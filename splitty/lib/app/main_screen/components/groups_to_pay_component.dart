@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:splitty/app/group_to_pay_detail_screen/group_to_pay_detail_screen.dart';
 import 'package:splitty/app/main_screen/components/groups_to_pay_skeleton_list.dart';
 import 'package:splitty/app/main_screen/handlers/group_handler.dart';
+import 'package:splitty/app/main_screen/view_all_groups_screen.dart';
 import 'package:splitty/config/colors.dart';
 import 'package:splitty/providers/groups_to_pay_provider.dart';
 import 'package:splitty/providers/my_groups_provider.dart';
@@ -70,7 +71,12 @@ class _GroupsToPayComponentState extends ConsumerState<GroupsToPayComponent> {
               ),
               TextButton(
                 onPressed: () {
-                  //TODO: fetch groups all with pagination and lazyload
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ViewAllGroupsScreen(),
+                    ),
+                  );
                 },
                 child: const Text("View All"),
               ),

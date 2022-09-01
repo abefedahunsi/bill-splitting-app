@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:splitty/app/main_screen/components/my_groups_component_list_skeleton.dart';
 import 'package:splitty/app/main_screen/handlers/group_handler.dart';
 import 'package:splitty/app/group_screen/my_created_group_detail_screen.dart';
+import 'package:splitty/app/main_screen/view_my_all_groups_screen.dart';
 import 'package:splitty/config/colors.dart';
 import 'package:splitty/providers/my_groups_provider.dart';
 
@@ -69,7 +70,12 @@ class _MyGroupsComponentState extends ConsumerState<MyGroupsComponent> {
               ),
               TextButton(
                 onPressed: () {
-                  //TODO: fetch my created groups all with pagination and lazyload
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ViewMyAllGroupsScreen(),
+                    ),
+                  );
                 },
                 child: const Text("View All"),
               ),
