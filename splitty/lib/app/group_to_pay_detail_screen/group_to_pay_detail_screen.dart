@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:splitty/app/group_screen/handlers/bill_handler.dart';
@@ -186,10 +187,6 @@ class _GroupToPayDetailScreenState
     required String memberId,
     required num splitAmount,
   }) async {
-    //TODO: complete pay using UPI option, show users payment details in model, and show button
-    // to pay or cancel the current option,
-    // on tap of pay, open UPI app, and mark as paid
-
     try {
       ScaffoldMessengerState scaffoldMessengerState =
           ScaffoldMessenger.of(context);
@@ -207,49 +204,123 @@ class _GroupToPayDetailScreenState
         return;
       }
 
-      // open upi intent
-      bool res = await launchUPIApp(
-        upiAddress: groupCreatorUser.upiId,
-        name: groupCreatorUser.name,
-        amount: splitAmount,
-        message: "${widget.screenTitle} payment ",
-      );
+      showDialog(
+          context: context,
+          builder: (dialogCtx) {
+            return Dialog(
+              child: Container(
+                height: 330,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Colors.grey[200],
+                      backgroundImage: CachedNetworkImageProvider(
+                          groupCreatorUser.profileImage),
+                      radius: 48,
+                    ),
+                    Text(groupCreatorUser.name),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.phone_outlined),
+                        Text(groupCreatorUser.phoneNumber),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Image(
+                          image: AssetImage("assets/upi_logo.png"),
+                          height: 30,
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          groupCreatorUser.upiId,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(dialogCtx);
+                          },
+                          child: const Text("Cancel"),
+                        ),
+                        const SizedBox(width: 10),
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            padding: MaterialStateProperty.all(
+                              const EdgeInsets.symmetric(horizontal: 14),
+                            ),
+                            shape: MaterialStateProperty.all(
+                                const StadiumBorder()),
+                          ),
+                          onPressed: () async {
+                            NavigatorState navigatorState =
+                                Navigator.of(dialogCtx);
+                            // open upi intent
+                            await launchUPIApp(
+                              upiAddress: groupCreatorUser.upiId,
+                              name: groupCreatorUser.name,
+                              amount: splitAmount,
+                              message: "${widget.screenTitle} payment ",
+                            );
 
-      log("$res");
+                            // save info to DB
+                            await payBillUsingUPI(
+                              groupId: widget.docid,
+                              billId: billId,
+                              memberId: memberId,
+                            );
 
-      // // save info to DB
-      // await payBillUsingUPI(
-      //   groupId: widget.docid,
-      //   billId: billId,
-      //   memberId: memberId,
-      // );
+                            // fetch updated details &
+                            // update the state
+                            List<CurrentGroupBillModel>? bills =
+                                await getBills(groupId: widget.docid);
 
-      // // fetch updated details &
-      // // update the state
-      // List<CurrentGroupBillModel>? bills =
-      //     await getBills(groupId: widget.docid);
+                            if (bills != null) {
+                              ref.read(currentGroupBillsProvider.state).state =
+                                  bills;
+                            }
 
-      // if (bills != null) {
-      //   ref.read(currentGroupBillsProvider.state).state = bills;
-      // }
+                            // show message
+                            scaffoldMessengerState.showSnackBar(
+                              SnackBar(
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                backgroundColor: const Color(0xFFe5e5e5),
+                                content: const Text(
+                                  "Bill Split marked as Paid ✅",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: "Outfit",
+                                  ),
+                                ),
+                              ),
+                            );
 
-      // show message
-      scaffoldMessengerState.showSnackBar(
-        SnackBar(
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          backgroundColor: const Color(0xFFe5e5e5),
-          content: const Text(
-            "Bill Split marked as Paid ✅",
-            style: TextStyle(
-              color: Colors.black,
-              fontFamily: "Outfit",
-            ),
-          ),
-        ),
-      );
+                            navigatorState.pop();
+                          },
+                          child: const Text("Pay"),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          });
     } catch (e) {
       showAlertDialog(
           context: context,
