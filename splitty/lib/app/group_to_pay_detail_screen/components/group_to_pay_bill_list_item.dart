@@ -27,7 +27,7 @@ class GroupToPayBillListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     int totalMembers = members.length;
     num splitAmount = billAmount / totalMembers;
-    String splitAmountString = splitAmount.toStringAsFixed(2);
+    String splitAmountString = splitAmount.round().toString();
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),

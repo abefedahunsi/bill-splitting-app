@@ -396,7 +396,7 @@ class _GroupToPayDetailScreenState
                     bool needToPay = members.contains(uid);
                     bool billPaid = billPaidByMembers.contains(uid);
 
-                    num splitAmount = (billAmount / members.length);
+                    int splitAmount = (billAmount / members.length).round();
 
                     return GestureDetector(
                       onTap: () {
@@ -422,10 +422,7 @@ class _GroupToPayDetailScreenState
                         showPaymentBtn: true,
                         onPayTap: () {
                           _showPaymentOption(
-                              uid: uid,
-                              billId: id,
-                              splitAmount:
-                                  num.parse(splitAmount.toStringAsFixed(2)));
+                              uid: uid, billId: id, splitAmount: splitAmount);
                         },
                       ),
                     );

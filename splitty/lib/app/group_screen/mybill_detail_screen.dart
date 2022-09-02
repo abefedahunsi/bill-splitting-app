@@ -42,7 +42,7 @@ class MyBillDetailScreen extends ConsumerWidget {
 
     List<dynamic> billPaidByMembers = billData["billPaidByMembers"] ?? [];
 
-    String splitAmount = (billAmount / billMembers.length).toStringAsFixed(2);
+    String splitAmount = (billAmount / billMembers.length).round().toString();
 
     return Scaffold(
       appBar: AppBar(
