@@ -1,6 +1,6 @@
 # Splitty: Bill Splitting App
 
-<img src="https://dhruvilxcode.github.io/splitterapp/assets/mobile-illustration.svg" height="400px">
+![img](./assets/splitty-banner.png)
 
 ## Link
 <a href="https://github.com/dhruvilxcode/bill-splitting-app/blob/main/splitty.apk?raw=true" download>
